@@ -1,26 +1,26 @@
+import type { Contract, ContractFactory } from 'ethers';
 import type { HardhatRuntimeEnvironment } from 'hardhat/types';
-import type { ContractFactory, Contract } from 'ethers';
 
 import {
-  Manifest,
-  logWarning,
-  ProxyDeployment,
   BeaconProxyUnsupportedError,
-  RemoteDeploymentId,
   InitialOwnerUnsupportedKindError,
+  Manifest,
+  ProxyDeployment,
+  RemoteDeploymentId,
+  logWarning,
 } from '@openzeppelin/upgrades-core';
 
+import { enableDefender } from './defender/utils';
 import {
   DeployProxyOptions,
-  deploy,
-  getProxyFactory,
-  getTransparentUpgradeableProxyFactory,
   DeployTransaction,
+  deploy,
   deployProxyImpl,
   getInitializerData,
+  getProxyFactory,
   getSigner,
+  getTransparentUpgradeableProxyFactory,
 } from './utils';
-import { enableDefender } from './defender/utils';
 import { getContractInstance } from './utils/contract-instance';
 import { getInitialOwner } from './utils/initial-owner';
 
@@ -85,7 +85,10 @@ export function makeDeployProxy(hre: HardhatRuntimeEnvironment, defenderModule: 
       case 'transparent': {
         const initialOwner = await getInitialOwner(opts, signer);
 
-        const TransparentUpgradeableProxyFactory = await getTransparentUpgradeableProxyFactory(hre, signer);
+        const TransparentUpgradeableProxyFactory = await getTransparentUpgradeableProxyFactory(
+          hre,
+          opts?.customProxySigner || signer,
+        );
         proxyDeployment = Object.assign(
           { kind },
           await deploy(hre, opts, TransparentUpgradeableProxyFactory, impl, initialOwner, data),

@@ -5,7 +5,7 @@ import {
   ValidationOptions,
   withValidationDefaults,
 } from '@openzeppelin/upgrades-core';
-import { Overrides } from 'ethers';
+import { Overrides, Signer } from 'ethers';
 
 /**
  * Options for functions that can deploy an implementation contract.
@@ -92,7 +92,13 @@ export type DeployContractOptions = Omit<StandaloneOptions, 'txOverrides'> & // 
   DefenderDeployOptions & {
     unsafeAllowDeployContract?: boolean;
   };
-export type DeployProxyOptions = StandaloneOptions & Initializer & InitialOwner & DefenderDeployOptions;
+
+export type CustomImplSigner = { customProxySigner?: Signer };
+export type DeployProxyOptions = StandaloneOptions &
+  Initializer &
+  InitialOwner &
+  DefenderDeployOptions &
+  CustomImplSigner;
 export type ForceImportOptions = ProxyKindOption;
 export type PrepareUpgradeOptions = UpgradeOptions & GetTxResponse & DefenderDeployOptions;
 export type UpgradeBeaconOptions = UpgradeOptions & DefenderDeploy;
